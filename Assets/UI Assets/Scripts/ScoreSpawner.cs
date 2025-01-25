@@ -8,6 +8,7 @@ public class ScoreSpawner : MonoBehaviour
     public float torqueAmount;
     public float torqueRange = 50;
     
+
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -19,7 +20,6 @@ public class ScoreSpawner : MonoBehaviour
     void Update()
     {
         if (Input.GetMouseButtonDown(0)){
-            Vector3 screenPosition = Input.mousePosition;
             Quaternion spawnRotation = Quaternion.identity;
             GameObject newObject = Instantiate(pointScorePopPrefab, new Vector3(0, 0, 0), spawnRotation);
             ScoreUIController scoreUIController = newObject.GetComponent<ScoreUIController>();
