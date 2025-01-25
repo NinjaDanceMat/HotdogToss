@@ -5,12 +5,17 @@ public enum HotDogState
 { 
     direction,
     velocity,
-    bouncing
+    bouncing,
+    joeover,
+    evenMoreJoeover,
+    aboluteJoeover
 }
 
 
 public class HotDogController : MonoBehaviour
 {
+    public HighScoreManager scoreManager;
+
     public HotDogState currentState = HotDogState.direction;
 
     public Transform hotdogTosserTransform;
@@ -38,9 +43,21 @@ public class HotDogController : MonoBehaviour
     public int slowMoModesLeft;
     public int maxSlowMoModes;
 
+    public int lives;
+    public int maxLives;
+    public TMPro.TextMeshProUGUI livesDisplay;
+
+    public GameObject gameOverScreen;
+    public GameObject highscore;
+    public TMPro.TextMeshProUGUI finalScore;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        
+        lives = maxLives;
+        livesDisplay.text = "Lives: " + lives;
         slowMoModesLeft = maxSlowMoModes;
         Physics2D.gravity *= 10;
     }
@@ -48,9 +65,28 @@ public class HotDogController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (currentState == HotDogState.evenMoreJoeover)
+        {
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                currentState = HotDogState.aboluteJoeover;
+                scoreManager.SaveScore();
+            }
+        }
+        else if (currentState == HotDogState.aboluteJoeover)
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                scoreManager.highScoreDisplays.SetActive(false);
+                currentState = HotDogState.direction;
+                lives = maxLives;
+                PermanentScoreController.instance.totalScore = 0;
+            }
+        }
+
         if (currentState == HotDogState.direction)
         {
-            
+
             Vector3 mouse_pos = Input.mousePosition;
             Vector3 object_pos = Camera.main.WorldToScreenPoint(hotdogTosserTransform.position);
             mouse_pos.x = mouse_pos.x - object_pos.x;
@@ -73,7 +109,7 @@ public class HotDogController : MonoBehaviour
                 currentVelocity = maxVelocity;
             }
 
-            arrow.localScale = new Vector3(Mathf.Lerp(minArrowScale, maxArrowScale, currentVelocity/maxVelocity), arrow.localScale.y, arrow.localScale.z);
+            arrow.localScale = new Vector3(Mathf.Lerp(minArrowScale, maxArrowScale, currentVelocity / maxVelocity), arrow.localScale.y, arrow.localScale.z);
 
             if (Input.GetKeyUp(KeyCode.Mouse0))
             {
@@ -86,7 +122,7 @@ public class HotDogController : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Mouse0) && slowMoModesLeft > 0)
             {
-               
+
                 currentVelocity = 0;
                 slowMoMode = HotDogState.direction;
                 slowMoModeEnabled = true;
@@ -97,9 +133,23 @@ public class HotDogController : MonoBehaviour
             }
             if (hotdogTransform.position.y < minYPos)
             {
+                currentState = HotDogState.direction;
+                ////DEATH
+                ///
+                lives -= 1;
+                livesDisplay.text = "Lives: " + lives;
+                if (lives <= 0)
+                {
+                    currentState = HotDogState.joeover;
+                    gameOverScreen.SetActive(true);
+                    finalScore.text = "Final Score: " + PermanentScoreController.instance.totalScore;
+                }
+
+
+                ScoreSpawner.instance.scoreForThisRun = 0;
                 slowMoModesLeft = maxSlowMoModes;
                 slowMoModeEnabled = false;
-                currentState = HotDogState.direction;
+               
                 hotdogBody.linearVelocity = Vector3.zero;
                 hotdogBody.bodyType = RigidbodyType2D.Kinematic;
                 hotdogTransform.localPosition = Vector3.zero;
@@ -116,8 +166,8 @@ public class HotDogController : MonoBehaviour
                     mouse_pos.y = mouse_pos.y - object_pos.y;
                     float angle = Mathf.Atan2(mouse_pos.y, mouse_pos.x) * Mathf.Rad2Deg;
                     sloMoArrow.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
-                    
-                    currentVelocity += Time.deltaTime * velocityIncreseSpeed*10;
+
+                    currentVelocity += Time.deltaTime * velocityIncreseSpeed * 10;
 
                     if (currentVelocity > maxVelocity)
                     {
@@ -134,6 +184,15 @@ public class HotDogController : MonoBehaviour
                         Time.fixedDeltaTime = 0.02f * Time.timeScale;
                     }
                 }
+            }
+        }
+        if (currentState == HotDogState.joeover)
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                currentState = HotDogState.evenMoreJoeover;
+                gameOverScreen.SetActive(false);
+                scoreManager.NewScore(PermanentScoreController.instance.totalScore);
             }
         }
     }
