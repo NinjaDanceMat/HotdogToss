@@ -13,6 +13,8 @@ public enum HotDogState
 
 public class HotDogController : MonoBehaviour
 {
+    public SpriteRenderer launchArrow;
+
     public HighScoreManager scoreManager;
 
     public HotDogState currentState = HotDogState.direction;
@@ -176,6 +178,7 @@ public class HotDogController : MonoBehaviour
 
             if (Input.GetKeyUp(KeyCode.Mouse0))
             {
+                launchArrow.enabled = false; 
                 currentState = HotDogState.bouncing;
                 hotdogBody.bodyType = RigidbodyType2D.Dynamic;
                 hotdogBody.linearVelocity = transform.right * currentVelocity * velocityMultiplier;
@@ -250,6 +253,7 @@ public class HotDogController : MonoBehaviour
 
     private void ResetAfterBounce()
     {
+        launchArrow.enabled = true;
         Trampoline.instance.gameObject.SetActive(false);
         WallManager.instance.Deactive();
         currentState = HotDogState.direction;

@@ -235,6 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60c2dad841c36a448ace5d6a7856e86b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  launchArrow: {fileID: 152168068}
   scoreManager: {fileID: 1999454764}
   currentState: 0
   hotdogTosserTransform: {fileID: 101941065}
