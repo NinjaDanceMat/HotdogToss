@@ -1,3 +1,4 @@
+using Mono.Cecil.Cil;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -5,25 +6,28 @@ using UnityEngine.Rendering.Universal;
 public enum PowerUpType{
     doubleDog,
     bunBarrier,
-    portProtector
+    porkProtector
 }
 
 public class ModifierAnnouncer : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI announcementText;
     [SerializeField] GameObject announcementPrefab;
-    [SerializeField] Color32 dogColour;
-    [SerializeField] Color32 bunColour;
-    [SerializeField] Color32 porkColour;
+    [SerializeField] Color dogColour = new Color();
+    [SerializeField] Color bunColour = new Color();
+    [SerializeField] Color porkColour = new Color();
     [SerializeField] string doubleDog = "Double Dog!";
     [SerializeField] string bunBarrier = "Bun Barrier!";
     [SerializeField] string porkProtector = "Port Protector!";
-    public float torqueRange = 10f;
+    public float torqueRange = 20f;
+    public ParticleSystem particleSystem;
+     
 
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+
     }
 
     // Update is called once per frame
@@ -33,13 +37,32 @@ public class ModifierAnnouncer : MonoBehaviour
             GameObject newObject = Instantiate(announcementPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             float torqueAmount = Random.Range(-torqueRange, torqueRange);
             newObject.GetComponent<Rigidbody2D>().AddTorque(torqueAmount);
+            announcementText = newObject.GetComponentInChildren<TextMeshProUGUI>();
+            particleSystem = newObject.GetComponent<ParticleSystem>();
+            whichPowerUp(PowerUpType.bunBarrier);
         }
         
     }
 
     public void whichPowerUp(PowerUpType newPowerUp){
         if (newPowerUp == PowerUpType.doubleDog){
-
+            announcementText.text = "Double Dog!";
+            announcementText.color = dogColour;
+            var main = particleSystem.main;
+            main.startColor = new ParticleSystem.MinMaxGradient(dogColour);
+            
+        }
+        else if (newPowerUp == PowerUpType.bunBarrier){
+            announcementText.text = "Bun Barrier!";
+            announcementText.color = bunColour;
+            var main = particleSystem.main;
+            main.startColor = new ParticleSystem.MinMaxGradient(bunColour);
+        }
+        else if (newPowerUp == PowerUpType.porkProtector){
+            announcementText.text = "Pork Protector!";
+            announcementText.color = porkColour;
+            var main = particleSystem.main;
+            main.startColor = new ParticleSystem.MinMaxGradient(porkColour);
         }
     }
 }

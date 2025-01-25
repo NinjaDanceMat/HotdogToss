@@ -293,7 +293,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startColor:
       serializedVersion: 2
-      minMaxState: 2
+      minMaxState: 0
       minColor: {r: 1, g: 0.9295661, b: 0.36037737, a: 0.26666668}
       maxColor: {r: 1, g: 0.98180777, b: 0.5566037, a: 0.5647059}
       maxGradient:
@@ -5006,8 +5006,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4287559935
+  m_fontColor: {r: 1, g: 0.9736516, b: 0.5566037, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
