@@ -4673,6 +4673,11 @@ Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 8105373437165527135, guid: c34e5db9b9b999348a17e5fcb1812ffc, type: 3}
   m_PrefabInstance: {fileID: 4465894612898252583}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &2118244952 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 9159282200960075404, guid: c34e5db9b9b999348a17e5fcb1812ffc, type: 3}
+  m_PrefabInstance: {fileID: 4465894612898252583}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4465894612898252583
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4725,6 +4730,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7373288700891339279, guid: c34e5db9b9b999348a17e5fcb1812ffc, type: 3}
+      propertyPath: oof
+      value: 
+      objectReference: {fileID: 21300000, guid: 0e3f08bdce07fed4dbefd088945ac303, type: 3}
+    - target: {fileID: 7373288700891339279, guid: c34e5db9b9b999348a17e5fcb1812ffc, type: 3}
+      propertyPath: normal
+      value: 
+      objectReference: {fileID: 21300000, guid: f37b401fb8a35d841ba556d5e6c1b624, type: 3}
+    - target: {fileID: 7373288700891339279, guid: c34e5db9b9b999348a17e5fcb1812ffc, type: 3}
+      propertyPath: render
+      value: 
+      objectReference: {fileID: 2118244952}
     - target: {fileID: 7373288700891339279, guid: c34e5db9b9b999348a17e5fcb1812ffc, type: 3}
       propertyPath: extraHotDog
       value: 0
