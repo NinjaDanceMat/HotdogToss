@@ -62,13 +62,19 @@ public class HotDogController : MonoBehaviour
     public GameObject sloMo1;
     public GameObject sloMo2;
     public GameObject sloMo3;
+
+    public GameObject lives1;
+    public GameObject lives2;
+    public GameObject lives3;
+
     void Start()
     {
         
         lives = maxLives;
-        livesDisplay.text = "Lives: " + lives;
+
         slowMoModesLeft = maxSlowMoModes;
         UpdateSloMoDisplay();
+        UpdateLivesDisplay();
         Physics2D.gravity *= 10;
 
         mainCamera = Camera.main; // Get the main camera
@@ -94,6 +100,25 @@ public class HotDogController : MonoBehaviour
         }
     }
 
+    public void UpdateLivesDisplay()
+    {
+        lives1.SetActive(false);
+        lives2.SetActive(false);
+        lives3.SetActive(false);
+        if (lives > 0)
+        {
+            lives1.SetActive(true);
+        }
+        if (lives > 1)
+        {
+            lives2.SetActive(true);
+        }
+        if (lives > 2)
+        {
+            lives3.SetActive(true);
+        }
+    }
+
     void Update()
     {
         if (currentState == HotDogState.evenMoreJoeover)
@@ -111,6 +136,7 @@ public class HotDogController : MonoBehaviour
                 scoreManager.highScoreDisplays.SetActive(false);
                 currentState = HotDogState.direction;
                 lives = maxLives;
+                UpdateLivesDisplay();
                 PermanentScoreController.instance.totalScore = 0;
             }
         }
@@ -220,7 +246,8 @@ public class HotDogController : MonoBehaviour
         WallManager.instance.Deactive();
         currentState = HotDogState.direction;
         lives -= 1;
-        livesDisplay.text = "Lives: " + lives;
+        UpdateLivesDisplay();
+       
 
         if (lives <= 0)
         {
