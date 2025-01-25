@@ -32,7 +32,7 @@ public class BubbleBehaviour : MonoBehaviour
         {
             WallManager.instance.ActivateWalls();
         }
-
+        ScoreSpawner.instance.Score(transform.position);
         Destroy(gameObject);
     }
 
