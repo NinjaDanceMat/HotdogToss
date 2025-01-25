@@ -15,7 +15,11 @@ public class ScoreUIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (transform.position.y < -50){
+                Destroy(gameObject);
+            }
         
+
     }
 
     public void UpdateScoreValue(){
