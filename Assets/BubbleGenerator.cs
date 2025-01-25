@@ -9,6 +9,7 @@ public class BubbleGenerator : MonoBehaviour
     public GameObject bubblePrefab;
     public GameObject bonusHotDogPrefab;
     public GameObject wallPrefab;
+    public GameObject trampolinePrefab;
 
     public Transform spawnMinPos;
     public Transform spawnMaxPos;
@@ -62,7 +63,7 @@ public class BubbleGenerator : MonoBehaviour
             if (bonusSpawnTimer > bonusSpawnTime)
             {
                 bonusSpawnTimer = 0;
-                int randomInt = Random.Range(0, 2);
+                int randomInt = Random.Range(0,3);
                 if (randomInt == 0)
                 {
                     spawnPrefab = bonusHotDogPrefab;
@@ -71,7 +72,11 @@ public class BubbleGenerator : MonoBehaviour
                 {
                     spawnPrefab = wallPrefab;
                 }
-             
+                else if (randomInt == 2)
+                {
+                    spawnPrefab = trampolinePrefab;
+                }
+
             }
             bubbles.Add(Instantiate(spawnPrefab, newPos, Quaternion.identity));
         }

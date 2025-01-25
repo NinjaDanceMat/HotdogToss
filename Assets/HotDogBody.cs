@@ -19,6 +19,11 @@ public class HotDogBody : MonoBehaviour
             hotdogBody.linearVelocityX = BubbleGenerator.instance.centerPoint.position.x - transform.position.x;
             hotdogBody.linearVelocityX = Mathf.Max(50, Mathf.Abs(hotdogBody.linearVelocityX)) * (hotdogBody.linearVelocityX >= 0 ? 1 : -1);
         }
+        if (collision.gameObject.tag == "Trampoline")
+        {
+            hotdogBody.linearVelocityY = bouncePhysicsUpwards * 3;
+            collision.gameObject.SetActive(false);
+        }
     }
 
     public void Update()

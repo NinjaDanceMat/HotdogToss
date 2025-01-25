@@ -10,6 +10,7 @@ public class BubbleBehaviour : MonoBehaviour
 
     public bool isBonus;
     public bool isWall;
+    public bool isTrampoline;
 
     public GameObject bonusHotDogPrefab;
 
@@ -31,6 +32,10 @@ public class BubbleBehaviour : MonoBehaviour
         if (isWall)
         {
             WallManager.instance.ActivateWalls();
+        }
+        if (isTrampoline)
+        {
+            Trampoline.instance.gameObject.SetActive(true);
         }
         ScoreSpawner.instance.Score(transform.position);
         Destroy(gameObject);

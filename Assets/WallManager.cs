@@ -32,4 +32,9 @@ public class WallManager : MonoBehaviour
         wallTimer = wallTime;
         walls.SetActive(true);
     }
+    public void Deactive()
+    {
+        wallTimer = 0;
+        walls.SetActive(false);
+    }
 }

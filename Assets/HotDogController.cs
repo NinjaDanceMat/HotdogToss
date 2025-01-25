@@ -59,16 +59,39 @@ public class HotDogController : MonoBehaviour
 
     public Vector3 defaultCamTransform;
 
+    public GameObject sloMo1;
+    public GameObject sloMo2;
+    public GameObject sloMo3;
     void Start()
     {
         
         lives = maxLives;
         livesDisplay.text = "Lives: " + lives;
         slowMoModesLeft = maxSlowMoModes;
+        UpdateSloMoDisplay();
         Physics2D.gravity *= 10;
 
         mainCamera = Camera.main; // Get the main camera
         defaultCamTransform = mainCamera.transform.position;
+    }
+
+    public void UpdateSloMoDisplay()
+    {
+        sloMo1.SetActive(false);
+        sloMo2.SetActive(false);
+        sloMo3.SetActive(false);
+        if (slowMoModesLeft > 0)
+        {
+            sloMo1.SetActive(true);
+        }
+        if (slowMoModesLeft > 1)
+        {
+            sloMo2.SetActive(true);
+        }
+        if (slowMoModesLeft > 2)
+        {
+            sloMo3.SetActive(true);
+        }
     }
 
     void Update()
@@ -133,6 +156,7 @@ public class HotDogController : MonoBehaviour
                 slowMoMode = HotDogState.direction;
                 slowMoModeEnabled = true;
                 slowMoModesLeft -= 1;
+                UpdateSloMoDisplay();
                 sloMoArrow.gameObject.SetActive(true);
                 Time.timeScale = 0.1f;
                 Time.fixedDeltaTime = 0.02f * Time.timeScale;
@@ -192,6 +216,8 @@ public class HotDogController : MonoBehaviour
 
     private void ResetAfterBounce()
     {
+        Trampoline.instance.gameObject.SetActive(false);
+        WallManager.instance.Deactive();
         currentState = HotDogState.direction;
         lives -= 1;
         livesDisplay.text = "Lives: " + lives;
@@ -205,6 +231,7 @@ public class HotDogController : MonoBehaviour
 
         ScoreSpawner.instance.scoreForThisRun = 0;
         slowMoModesLeft = maxSlowMoModes;
+        UpdateSloMoDisplay();
         slowMoModeEnabled = false;
         sloMoArrow.gameObject.SetActive(false);
         Time.timeScale = 1;
