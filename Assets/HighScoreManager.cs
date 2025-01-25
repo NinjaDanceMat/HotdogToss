@@ -1,10 +1,11 @@
-
 using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
 
 public class HighScoreManager : MonoBehaviour
 {
     public List<Score> scores = new List<Score>();
+    private string highScoreFilePath;
 
     public GameObject InputName;
     public GameObject newHighScoreOb;
@@ -21,17 +22,25 @@ public class HighScoreManager : MonoBehaviour
     public int maxScores;
 
     public HotDogController controller;
+
+    private void Awake()
+    {
+        // Set the path to the high score file
+        highScoreFilePath = Path.Combine(Application.persistentDataPath, "highscores.json");
+        LoadHighScores();
+    }
+
     public void NewScore(int newScore)
     {
         Score newScoreClass = new Score();
         scores.Add(newScoreClass);
         newScoreClass.score = newScore;
 
-        scores.Sort((a, b) => a.score.CompareTo(b.score));
-        scores.Reverse();
+        scores.Sort((a, b) => b.score.CompareTo(a.score)); // Sort in descending order
 
         bool newTopTenScore = false;
         bool newHighScore = false;
+
         if (scores.Count <= maxScores)
         {
             newTopTenScore = true;
@@ -44,14 +53,17 @@ public class HighScoreManager : MonoBehaviour
                 newTopTenScore = true;
             }
         }
+
         if (scores[0] == newScoreClass)
         {
             newHighScore = true;
         }
+
         if (newHighScore || newTopTenScore)
         {
             InputName.SetActive(true);
         }
+
         if (newHighScore)
         {
             newHighScoreOb.SetActive(true);
@@ -62,11 +74,12 @@ public class HighScoreManager : MonoBehaviour
             newTopTenScoreOb.SetActive(true);
             mostRecentScore = newScoreClass;
         }
+
         newHighScoreOb.SetActive(newHighScore);
-        //noNewScore.SetActive(!newTopTenScore && !newHighScore);
+
         if (!newTopTenScore && !newHighScore)
         {
-            SaveScore();
+            SaveHighScores();
             controller.currentState = HotDogState.aboluteJoeover;
         }
     }
@@ -77,24 +90,57 @@ public class HighScoreManager : MonoBehaviour
         {
             mostRecentScore.name = inputName.text;
         }
+
         InputName.SetActive(false);
         newHighScoreOb.SetActive(false);
         newTopTenScoreOb.SetActive(false);
         highScoreDisplays.SetActive(true);
         highScoreDisplayText.text = "";
+
         foreach (Score score in scores)
         {
-            highScoreDisplayText.text += score.name;
-            highScoreDisplayText.text += ": ";
-            highScoreDisplayText.text += score.score;
-            highScoreDisplayText.text += "\n";
+            highScoreDisplayText.text += score.name + ": " + score.score + "\n";
         }
 
+        SaveHighScores(); // Save to JSON file
+    }
+
+    private void SaveHighScores()
+    {
+        // Convert the list of scores to JSON and save to the file
+        HighScoreData data = new HighScoreData { scores = scores };
+        string json = JsonUtility.ToJson(data, true);
+        File.WriteAllText(highScoreFilePath, json);
+    }
+
+    private void LoadHighScores()
+    {
+        // Check if the file exists
+        if (File.Exists(highScoreFilePath))
+        {
+            // Load the file and deserialize the JSON into the scores list
+            string json = File.ReadAllText(highScoreFilePath);
+            HighScoreData data = JsonUtility.FromJson<HighScoreData>(json);
+            scores = data?.scores ?? new List<Score>();
+        }
+        else
+        {
+            // Create a new file if it doesn't exist
+            scores = new List<Score>();
+            SaveHighScores();
+        }
     }
 }
 
+[System.Serializable]
 public class Score
 {
     public string name;
     public int score;
+}
+
+[System.Serializable]
+public class HighScoreData
+{
+    public List<Score> scores;
 }

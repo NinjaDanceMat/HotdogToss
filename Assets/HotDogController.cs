@@ -11,7 +11,6 @@ public enum HotDogState
     aboluteJoeover
 }
 
-
 public class HotDogController : MonoBehaviour
 {
     public HighScoreManager scoreManager;
@@ -51,8 +50,15 @@ public class HotDogController : MonoBehaviour
     public GameObject highscore;
     public TMPro.TextMeshProUGUI finalScore;
 
+    // Camera zoom variables
+    public float zoomInSize = 3f; // Zoomed-in size (for orthographic cameras)
+    public float zoomOutSize = 5f; // Default size (for orthographic cameras)
+    public float zoomSpeed = 5f; // How fast the zoom effect happens
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private Camera mainCamera;
+
+    public Vector3 defaultCamTransform;
+
     void Start()
     {
         
@@ -60,9 +66,11 @@ public class HotDogController : MonoBehaviour
         livesDisplay.text = "Lives: " + lives;
         slowMoModesLeft = maxSlowMoModes;
         Physics2D.gravity *= 10;
+
+        mainCamera = Camera.main; // Get the main camera
+        defaultCamTransform = mainCamera.transform.position;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (currentState == HotDogState.evenMoreJoeover)
@@ -86,11 +94,10 @@ public class HotDogController : MonoBehaviour
 
         if (currentState == HotDogState.direction)
         {
-
             Vector3 mouse_pos = Input.mousePosition;
             Vector3 object_pos = Camera.main.WorldToScreenPoint(hotdogTosserTransform.position);
-            mouse_pos.x = mouse_pos.x - object_pos.x;
-            mouse_pos.y = mouse_pos.y - object_pos.y;
+            mouse_pos.x -= object_pos.x;
+            mouse_pos.y -= object_pos.y;
             float angle = Mathf.Atan2(mouse_pos.y, mouse_pos.x) * Mathf.Rad2Deg;
             hotdogTosserTransform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
@@ -122,7 +129,6 @@ public class HotDogController : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Mouse0) && slowMoModesLeft > 0)
             {
-
                 currentVelocity = 0;
                 slowMoMode = HotDogState.direction;
                 slowMoModeEnabled = true;
@@ -130,40 +136,24 @@ public class HotDogController : MonoBehaviour
                 sloMoArrow.gameObject.SetActive(true);
                 Time.timeScale = 0.1f;
                 Time.fixedDeltaTime = 0.02f * Time.timeScale;
+
+                // Start zooming in
+                StartCoroutine(LerpCameraZoom(zoomInSize,hotdogBody.transform.position));
             }
+
             if (hotdogTransform.position.y < minYPos)
             {
-                currentState = HotDogState.direction;
-                ////DEATH
-                ///
-                lives -= 1;
-                livesDisplay.text = "Lives: " + lives;
-                if (lives <= 0)
-                {
-                    currentState = HotDogState.joeover;
-                    gameOverScreen.SetActive(true);
-                    finalScore.text = "Final Score: " + PermanentScoreController.instance.totalScore;
-                }
-
-
-                ScoreSpawner.instance.scoreForThisRun = 0;
-                slowMoModesLeft = maxSlowMoModes;
-                slowMoModeEnabled = false;
-               
-                hotdogBody.linearVelocity = Vector3.zero;
-                hotdogBody.bodyType = RigidbodyType2D.Kinematic;
-                hotdogTransform.localPosition = Vector3.zero;
-                hotdogTransform.localRotation = Quaternion.identity;
-                arrow.localScale = new Vector3(minArrowScale, arrow.localScale.y, arrow.localScale.z);
+                ResetAfterBounce();
             }
+
             if (slowMoModeEnabled)
             {
                 if (slowMoMode == HotDogState.direction)
                 {
                     Vector3 mouse_pos = Input.mousePosition;
                     Vector3 object_pos = Camera.main.WorldToScreenPoint(sloMoArrow.position);
-                    mouse_pos.x = mouse_pos.x - object_pos.x;
-                    mouse_pos.y = mouse_pos.y - object_pos.y;
+                    mouse_pos.x -= object_pos.x;
+                    mouse_pos.y -= object_pos.y;
                     float angle = Mathf.Atan2(mouse_pos.y, mouse_pos.x) * Mathf.Rad2Deg;
                     sloMoArrow.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
@@ -182,6 +172,9 @@ public class HotDogController : MonoBehaviour
                         hotdogBody.linearVelocity = sloMoArrow.right * currentVelocity * velocityMultiplier;
                         Time.timeScale = 1;
                         Time.fixedDeltaTime = 0.02f * Time.timeScale;
+
+                        // Start zooming out
+                        StartCoroutine(LerpCameraZoom(zoomOutSize, defaultCamTransform));
                     }
                 }
             }
@@ -197,5 +190,59 @@ public class HotDogController : MonoBehaviour
         }
     }
 
-   
+    private void ResetAfterBounce()
+    {
+        currentState = HotDogState.direction;
+        lives -= 1;
+        livesDisplay.text = "Lives: " + lives;
+
+        if (lives <= 0)
+        {
+            currentState = HotDogState.joeover;
+            gameOverScreen.SetActive(true);
+            finalScore.text = "Final Score: " + PermanentScoreController.instance.totalScore;
+        }
+
+        ScoreSpawner.instance.scoreForThisRun = 0;
+        slowMoModesLeft = maxSlowMoModes;
+        slowMoModeEnabled = false;
+        sloMoArrow.gameObject.SetActive(false);
+        Time.timeScale = 1;
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+
+        hotdogBody.linearVelocity = Vector3.zero;
+        hotdogBody.bodyType = RigidbodyType2D.Kinematic;
+        hotdogTransform.localPosition = Vector3.zero;
+        hotdogTransform.localRotation = Quaternion.identity;
+        arrow.localScale = new Vector3(minArrowScale, arrow.localScale.y, arrow.localScale.z);
+
+        // Ensure the camera zooms out when the game resets
+        StartCoroutine(LerpCameraZoom(zoomOutSize, defaultCamTransform));
+    }
+
+    private System.Collections.IEnumerator LerpCameraZoom(float targetSize, Vector3 targetPos)
+    {
+        float startSize = mainCamera.orthographicSize;
+        Vector3 startPosition = mainCamera.transform.position;
+        Vector3 targetPosition = new Vector3(targetPos.x, targetPos.y, mainCamera.transform.position.z);
+        targetPosition = Vector3.Lerp(defaultCamTransform,targetPosition,0.1f);
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < 1f)
+        {
+            elapsedTime += Time.unscaledDeltaTime * zoomSpeed;
+
+            // Smoothly interpolate the camera size and position
+            mainCamera.orthographicSize = Mathf.Lerp(startSize, targetSize, elapsedTime);
+            mainCamera.transform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime);
+
+            yield return null;
+        }
+
+        // Ensure final values are set
+        mainCamera.orthographicSize = targetSize;
+        mainCamera.transform.position = targetPosition;
+    }
 }
+
