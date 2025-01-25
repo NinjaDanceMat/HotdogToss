@@ -68,7 +68,6 @@ public class HighScoreManager : MonoBehaviour
         {
             SaveScore();
             controller.currentState = HotDogState.aboluteJoeover;
-
         }
     }
 
