@@ -4,6 +4,7 @@ using UnityEngine;
 public class ScoreSpawner : MonoBehaviour
 {
     [SerializeField] GameObject pointScorePopPrefab;
+    [SerializeField] PermanentScoreController permanentScoreController;
     public int scoreForThisRun = 0;
     public float torqueAmount;
     public float torqueRange = 50;
@@ -30,6 +31,7 @@ public class ScoreSpawner : MonoBehaviour
             torqueAmount = Random.Range(-torqueRange, torqueRange);
             newObject.GetComponent<Rigidbody2D>().AddTorque(torqueAmount);
             scoreForThisRun += 1;
+            permanentScoreController.totalScore += scoreForThisRun;
             
             
         }
