@@ -67,9 +67,11 @@ public class HotDogController : MonoBehaviour
     public GameObject lives2;
     public GameObject lives3;
 
+    public float sloMoTimer;
+    public float maxSloMoTimer;
+
     void Start()
     {
-        
         lives = maxLives;
 
         slowMoModesLeft = maxSlowMoModes;
@@ -121,6 +123,11 @@ public class HotDogController : MonoBehaviour
 
     void Update()
     {
+        if (slowMoModeEnabled)
+        {
+            sloMoTimer += Time.deltaTime*10;
+            ScreenShake.Instance.TriggerShake();
+        }
         if (currentState == HotDogState.evenMoreJoeover)
         {
             if (Input.GetKeyDown(KeyCode.Return))
@@ -180,6 +187,7 @@ public class HotDogController : MonoBehaviour
             {
                 currentVelocity = 0;
                 slowMoMode = HotDogState.direction;
+                sloMoTimer = 0;
                 slowMoModeEnabled = true;
                 slowMoModesLeft -= 1;
                 UpdateSloMoDisplay();
@@ -215,7 +223,7 @@ public class HotDogController : MonoBehaviour
                     }
                     sloMoArrowScaler.localScale = new Vector3(Mathf.Lerp(minArrowScale, maxArrowScale, currentVelocity / maxVelocity), sloMoArrowScaler.localScale.y, sloMoArrowScaler.localScale.z);
 
-                    if (Input.GetKeyUp(KeyCode.Mouse0))
+                    if (Input.GetKeyUp(KeyCode.Mouse0) || sloMoTimer > maxSloMoTimer)
                     {
                         slowMoModeEnabled = false;
                         sloMoArrow.gameObject.SetActive(false);

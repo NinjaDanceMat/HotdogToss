@@ -16,9 +16,14 @@ public class BubbleBehaviour : MonoBehaviour
 
     public float minBonusXVelocityValue;
 
+    public Animator animator;
+    public Collider2D thisCollider;
+
+
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
+        ScreenShake.Instance.TriggerShake();
         BubbleGenerator.instance.bubbles.Remove(gameObject);
         if (isBonus)
         {
@@ -42,8 +47,13 @@ public class BubbleBehaviour : MonoBehaviour
             Trampoline.instance.gameObject.SetActive(true);
         }
         ScoreSpawner.instance.Score(transform.position);
-        Destroy(gameObject);
+
+
+        animator.SetTrigger("Burst");
+        thisCollider.enabled = false;
     }
+
+    
 
     public void Start()
     {
