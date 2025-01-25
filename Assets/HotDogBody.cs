@@ -10,9 +10,15 @@ public class HotDogBody : MonoBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
+        
         hotdogBody.linearVelocity *= bouncePhysicsMultiplier;
         hotdogBody.linearVelocityY = bouncePhysicsUpwards;
         hotdogBody.linearVelocity = Vector2.ClampMagnitude(hotdogBody.linearVelocity,100);
+        if (collision.gameObject.tag == "Wall")
+        {
+            hotdogBody.linearVelocityX = BubbleGenerator.instance.centerPoint.position.x - transform.position.x;
+            hotdogBody.linearVelocityX = Mathf.Max(50, Mathf.Abs(hotdogBody.linearVelocityX)) * (hotdogBody.linearVelocityX >= 0 ? 1 : -1);
+        }
     }
 
     public void Update()
