@@ -16,11 +16,13 @@ public class BubbleBehaviour : MonoBehaviour
 
     public float minBonusXVelocityValue;
 
+
     public void OnCollisionEnter2D(Collision2D collision)
     {
         BubbleGenerator.instance.bubbles.Remove(gameObject);
         if (isBonus)
         {
+            ModifierAnnouncer.instance.AnnoucePowerUp(PowerUpType.doubleDog);
             GameObject bonusHotDog = Instantiate(bonusHotDogPrefab, transform.position, Quaternion.identity);
             HotDogBody newBody = bonusHotDog.GetComponent<HotDogBody>();
             newBody.hotdogBody.bodyType = RigidbodyType2D.Dynamic;
@@ -31,10 +33,12 @@ public class BubbleBehaviour : MonoBehaviour
 
         if (isWall)
         {
+            ModifierAnnouncer.instance.AnnoucePowerUp(PowerUpType.bunBarrier);
             WallManager.instance.ActivateWalls();
         }
         if (isTrampoline)
         {
+            ModifierAnnouncer.instance.AnnoucePowerUp(PowerUpType.porkProtector);
             Trampoline.instance.gameObject.SetActive(true);
         }
         ScoreSpawner.instance.Score(transform.position);

@@ -22,26 +22,37 @@ public class ModifierAnnouncer : MonoBehaviour
     public float torqueRange = 20f;
     public ParticleSystem particleSystem;
      
+    public static ModifierAnnouncer instance;
+    public Transform annoucmentLocation;
 
-    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
-
+        instance = this;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(1)){
+        /*if (Input.GetMouseButtonDown(1)){
             GameObject newObject = Instantiate(announcementPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             float torqueAmount = Random.Range(-torqueRange, torqueRange);
             newObject.GetComponent<Rigidbody2D>().AddTorque(torqueAmount);
             announcementText = newObject.GetComponentInChildren<TextMeshProUGUI>();
             particleSystem = newObject.GetComponent<ParticleSystem>();
             whichPowerUp(PowerUpType.bunBarrier);
-        }
+        }*/
         
+    }
+
+    public void AnnoucePowerUp(PowerUpType typeOfPowerup)
+    {
+        GameObject newObject = Instantiate(announcementPrefab, annoucmentLocation.position, Quaternion.identity);
+        float torqueAmount = Random.Range(-torqueRange, torqueRange);
+        newObject.GetComponent<Rigidbody2D>().AddTorque(torqueAmount);
+        announcementText = newObject.GetComponentInChildren<TextMeshProUGUI>();
+        particleSystem = newObject.GetComponent<ParticleSystem>();
+        whichPowerUp(typeOfPowerup);
     }
 
     public void whichPowerUp(PowerUpType newPowerUp){
