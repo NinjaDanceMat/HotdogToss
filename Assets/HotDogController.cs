@@ -22,6 +22,9 @@ public class HotDogController : MonoBehaviour
     public float velocityIncreseSpeed;
 
     public Transform arrow;
+
+    public Transform sloMoArrow;
+    public Transform sloMoArrowScaler;
     public float maxVelocity;
     public float minArrowScale;
     public float maxArrowScale;
@@ -29,10 +32,16 @@ public class HotDogController : MonoBehaviour
     public Rigidbody2D hotdogBody;
     public float minYPos;
 
+    public bool slowMoModeEnabled;
+    public HotDogState slowMoMode;
+
+    public int slowMoModesLeft;
+    public int maxSlowMoModes;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        slowMoModesLeft = maxSlowMoModes;
         Physics2D.gravity *= 10;
     }
 
@@ -41,6 +50,7 @@ public class HotDogController : MonoBehaviour
     {
         if (currentState == HotDogState.direction)
         {
+            
             Vector3 mouse_pos = Input.mousePosition;
             Vector3 object_pos = Camera.main.WorldToScreenPoint(hotdogTosserTransform.position);
             mouse_pos.x = mouse_pos.x - object_pos.x;
@@ -74,14 +84,56 @@ public class HotDogController : MonoBehaviour
         }
         if (currentState == HotDogState.bouncing)
         {
+            if (Input.GetKeyDown(KeyCode.Mouse0) && slowMoModesLeft > 0)
+            {
+               
+                currentVelocity = 0;
+                slowMoMode = HotDogState.direction;
+                slowMoModeEnabled = true;
+                slowMoModesLeft -= 1;
+                sloMoArrow.gameObject.SetActive(true);
+                Time.timeScale = 0.1f;
+                Time.fixedDeltaTime = 0.02f * Time.timeScale;
+            }
             if (hotdogTransform.position.y < minYPos)
             {
+                slowMoModesLeft = maxSlowMoModes;
+                slowMoModeEnabled = false;
                 currentState = HotDogState.direction;
                 hotdogBody.linearVelocity = Vector3.zero;
                 hotdogBody.bodyType = RigidbodyType2D.Kinematic;
                 hotdogTransform.localPosition = Vector3.zero;
                 hotdogTransform.localRotation = Quaternion.identity;
                 arrow.localScale = new Vector3(minArrowScale, arrow.localScale.y, arrow.localScale.z);
+            }
+            if (slowMoModeEnabled)
+            {
+                if (slowMoMode == HotDogState.direction)
+                {
+                    Vector3 mouse_pos = Input.mousePosition;
+                    Vector3 object_pos = Camera.main.WorldToScreenPoint(sloMoArrow.position);
+                    mouse_pos.x = mouse_pos.x - object_pos.x;
+                    mouse_pos.y = mouse_pos.y - object_pos.y;
+                    float angle = Mathf.Atan2(mouse_pos.y, mouse_pos.x) * Mathf.Rad2Deg;
+                    sloMoArrow.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+                    
+                    currentVelocity += Time.deltaTime * velocityIncreseSpeed*10;
+
+                    if (currentVelocity > maxVelocity)
+                    {
+                        currentVelocity = maxVelocity;
+                    }
+                    sloMoArrowScaler.localScale = new Vector3(Mathf.Lerp(minArrowScale, maxArrowScale, currentVelocity / maxVelocity), sloMoArrowScaler.localScale.y, sloMoArrowScaler.localScale.z);
+
+                    if (Input.GetKeyUp(KeyCode.Mouse0))
+                    {
+                        slowMoModeEnabled = false;
+                        sloMoArrow.gameObject.SetActive(false);
+                        hotdogBody.linearVelocity = sloMoArrow.right * currentVelocity * velocityMultiplier;
+                        Time.timeScale = 1;
+                        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+                    }
+                }
             }
         }
     }

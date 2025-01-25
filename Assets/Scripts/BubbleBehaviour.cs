@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BubbleBehaviour : MonoBehaviour
@@ -8,8 +9,11 @@ public class BubbleBehaviour : MonoBehaviour
     public float maxSpeed;
 
     public bool isBonus;
+    public bool isWall;
 
     public GameObject bonusHotDogPrefab;
+
+    public float minBonusXVelocityValue;
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
@@ -20,6 +24,13 @@ public class BubbleBehaviour : MonoBehaviour
             HotDogBody newBody = bonusHotDog.GetComponent<HotDogBody>();
             newBody.hotdogBody.bodyType = RigidbodyType2D.Dynamic;
             newBody.hotdogBody.linearVelocityY = newBody.bouncePhysicsUpwards;
+            newBody.hotdogBody.linearVelocityX = BubbleGenerator.instance.centerPoint.position.x - transform.position.x;
+            newBody.hotdogBody.linearVelocityX = Mathf.Max(minBonusXVelocityValue, Mathf.Abs(newBody.hotdogBody.linearVelocityX)) * (newBody.hotdogBody.linearVelocityX >= 0 ? 1 : -1);
+        }
+
+        if (isWall)
+        {
+            WallManager.instance.ActivateWalls();
         }
 
         Destroy(gameObject);
