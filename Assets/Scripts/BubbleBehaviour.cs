@@ -2,15 +2,27 @@ using UnityEngine;
 
 public class BubbleBehaviour : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public float maxY;
+    public float speed;
+    public float minSpeed;
+    public float maxSpeed;
+
+    public void OnCollisionEnter2D(Collision2D collision)
     {
-        
+        Destroy(gameObject);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Start()
     {
-        
+        speed = Random.Range(minSpeed, maxSpeed);
+    }
+
+    public void Update()
+    {
+        transform.position = transform.position + new Vector3(0,Time.deltaTime*speed,0);
+        if (transform.position.y > maxY)
+        {
+            Destroy(gameObject);
+        }
     }
 }

@@ -13,6 +13,7 @@ public class HotDogController : MonoBehaviour
 {
     public HotDogState currentState = HotDogState.direction;
 
+    public Transform hotdogTosserTransform;
     public Transform hotdogTransform;
 
     public float velocityMultiplier;
@@ -26,11 +27,13 @@ public class HotDogController : MonoBehaviour
     public float maxArrowScale;
 
     public Rigidbody2D hotdogBody;
+    public float minYPos;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Physics2D.gravity *= 5;
+        Physics2D.gravity *= 10;
     }
 
     // Update is called once per frame
@@ -39,11 +42,11 @@ public class HotDogController : MonoBehaviour
         if (currentState == HotDogState.direction)
         {
             Vector3 mouse_pos = Input.mousePosition;
-            Vector3 object_pos = Camera.main.WorldToScreenPoint(hotdogTransform.position);
+            Vector3 object_pos = Camera.main.WorldToScreenPoint(hotdogTosserTransform.position);
             mouse_pos.x = mouse_pos.x - object_pos.x;
             mouse_pos.y = mouse_pos.y - object_pos.y;
             float angle = Mathf.Atan2(mouse_pos.y, mouse_pos.x) * Mathf.Rad2Deg;
-            hotdogTransform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+            hotdogTosserTransform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
@@ -71,7 +74,17 @@ public class HotDogController : MonoBehaviour
         }
         if (currentState == HotDogState.bouncing)
         {
-
+            if (hotdogTransform.position.y < minYPos)
+            {
+                currentState = HotDogState.direction;
+                hotdogBody.linearVelocity = Vector3.zero;
+                hotdogBody.bodyType = RigidbodyType2D.Kinematic;
+                hotdogTransform.localPosition = Vector3.zero;
+                hotdogTransform.localRotation = Quaternion.identity;
+                arrow.localScale = new Vector3(minArrowScale, arrow.localScale.y, arrow.localScale.z);
+            }
         }
     }
+
+   
 }
