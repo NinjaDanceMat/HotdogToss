@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem.EnhancedTouch;
 using static UnityEngine.GraphicsBuffer;
 
 public enum HotDogState
@@ -77,6 +78,10 @@ public class HotDogController : MonoBehaviour
     public int extraHotDogs;
 
     public static HotDogController instance;
+
+    public AudioSource whee;
+    public AudioSource powerUp;
+    public AudioSource slomo;
 
     void Start()
     {
@@ -175,6 +180,8 @@ public class HotDogController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
+
+                powerUp.Play();
                 currentState = HotDogState.velocity;
                 currentVelocity = 0;
             }
@@ -192,6 +199,10 @@ public class HotDogController : MonoBehaviour
 
             if (Input.GetKeyUp(KeyCode.Mouse0))
             {
+                powerUp.Stop();
+                whee.pitch = Random.Range(0.8f, 1.2f);
+                whee.Play();
+
                 launchArrow.enabled = false; 
                 currentState = HotDogState.bouncing;
                 hotdogBody.bodyType = RigidbodyType2D.Dynamic;
@@ -202,6 +213,8 @@ public class HotDogController : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Mouse0) && slowMoModesLeft > 0)
             {
+                slomo.pitch = Random.Range(0.8f, 1.2f);
+                slomo.Play();
                 currentVelocity = 0;
                 slowMoMode = HotDogState.direction;
                 sloMoTimer = 0;
@@ -244,6 +257,7 @@ public class HotDogController : MonoBehaviour
                     if (Input.GetKeyUp(KeyCode.Mouse0) || sloMoTimer > maxSloMoTimer)
                     {
                         lines.Stop();
+                        slomo.Stop();
                         slowMoModeEnabled = false;
                         sloMoArrow.gameObject.SetActive(false);
                         hotdogBody.linearVelocity = sloMoArrow.right * currentVelocity * velocityMultiplier;
@@ -287,6 +301,7 @@ public class HotDogController : MonoBehaviour
         ScoreSpawner.instance.scoreForThisRun = 0;
         slowMoModesLeft = maxSlowMoModes;
         lines.Stop();
+        slomo.Stop();
         UpdateSloMoDisplay();
         slowMoModeEnabled = false;
         sloMoArrow.gameObject.SetActive(false);

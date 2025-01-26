@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem.EnhancedTouch;
 
 public class HotDogBody : MonoBehaviour
 {
@@ -13,8 +14,20 @@ public class HotDogBody : MonoBehaviour
     public Sprite oof;
     public float oofTimer;
 
+    public AudioSource ouch;
+
+
     public void OnCollisionEnter2D(Collision2D collision)
     {
+        if (Random.Range(0, 4) == 0)
+        {
+
+            if (ouch != null)
+            {
+                ouch.pitch = Random.Range(0.8f, 1.2f);
+                ouch.Play();
+            }
+        }
         if (render !=null)
         {
             render.sprite = oof;
