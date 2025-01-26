@@ -47,6 +47,7 @@ public class HotDogBody : MonoBehaviour
         {
             if (transform.position.y < minYBonusPos)
             {
+                HotDogController.instance.extraHotDogs -= 1;
                 Destroy(gameObject);
             }
         }

@@ -72,6 +72,10 @@ public class HotDogController : MonoBehaviour
     public float sloMoTimer;
     public float maxSloMoTimer;
 
+    public int extraHotDogs;
+
+    public static HotDogController instance;
+
     void Start()
     {
         lives = maxLives;
@@ -83,6 +87,11 @@ public class HotDogController : MonoBehaviour
 
         mainCamera = Camera.main; // Get the main camera
         defaultCamTransform = mainCamera.transform.position;
+    }
+
+    private void Awake()
+    {
+        instance = this;
     }
 
     public void UpdateSloMoDisplay()
@@ -150,8 +159,11 @@ public class HotDogController : MonoBehaviour
             }
         }
 
-        if (currentState == HotDogState.direction)
+        else if (currentState == HotDogState.direction)
         {
+            Trampoline.instance.gameObject.SetActive(false);
+            WallManager.instance.Deactive();
+
             Vector3 mouse_pos = Input.mousePosition;
             Vector3 object_pos = Camera.main.WorldToScreenPoint(hotdogTosserTransform.position);
             mouse_pos.x -= object_pos.x;
@@ -165,7 +177,7 @@ public class HotDogController : MonoBehaviour
                 currentVelocity = 0;
             }
         }
-        if (currentState == HotDogState.velocity)
+        else if (currentState == HotDogState.velocity)
         {
             currentVelocity += Time.deltaTime * velocityIncreseSpeed;
 
@@ -184,7 +196,7 @@ public class HotDogController : MonoBehaviour
                 hotdogBody.linearVelocity = transform.right * currentVelocity * velocityMultiplier;
             }
         }
-        if (currentState == HotDogState.bouncing)
+        else if (currentState == HotDogState.bouncing)
         {
             if (Input.GetKeyDown(KeyCode.Mouse0) && slowMoModesLeft > 0)
             {
@@ -202,7 +214,7 @@ public class HotDogController : MonoBehaviour
                 StartCoroutine(LerpCameraZoom(zoomInSize,hotdogBody.transform.position));
             }
 
-            if (hotdogTransform.position.y < minYPos)
+            if (hotdogTransform.position.y < minYPos && extraHotDogs <= 0)
             {
                 ResetAfterBounce();
             }
@@ -240,7 +252,7 @@ public class HotDogController : MonoBehaviour
                 }
             }
         }
-        if (currentState == HotDogState.joeover)
+        else if (currentState == HotDogState.joeover)
         {
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {

@@ -27,6 +27,7 @@ public class BubbleBehaviour : MonoBehaviour
         BubbleGenerator.instance.bubbles.Remove(gameObject);
         if (isBonus)
         {
+            HotDogController.instance.extraHotDogs += 1;
             ModifierAnnouncer.instance.AnnoucePowerUp(PowerUpType.doubleDog);
             GameObject bonusHotDog = Instantiate(bonusHotDogPrefab, transform.position, Quaternion.identity);
             HotDogBody newBody = bonusHotDog.GetComponent<HotDogBody>();
