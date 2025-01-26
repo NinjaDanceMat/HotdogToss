@@ -16,7 +16,7 @@ public class HotDogBody : MonoBehaviour
 
     public AudioSource ouch;
 
-
+    public AudioSource boing;
     public void OnCollisionEnter2D(Collision2D collision)
     {
         if (Random.Range(0, 4) == 0)
@@ -38,11 +38,15 @@ public class HotDogBody : MonoBehaviour
         hotdogBody.linearVelocity = Vector2.ClampMagnitude(hotdogBody.linearVelocity,100);
         if (collision.gameObject.tag == "Wall")
         {
+            boing.pitch = Random.Range(0.8f, 1.2f);
+            boing.Play();
             hotdogBody.linearVelocityX = BubbleGenerator.instance.centerPoint.position.x - transform.position.x;
             hotdogBody.linearVelocityX = Mathf.Max(50, Mathf.Abs(hotdogBody.linearVelocityX)) * (hotdogBody.linearVelocityX >= 0 ? 1 : -1);
         }
         if (collision.gameObject.tag == "Trampoline")
         {
+            boing.pitch = Random.Range(0.8f, 1.2f);
+            boing.Play();
             hotdogBody.linearVelocityY = bouncePhysicsUpwards * 3;
             collision.gameObject.SetActive(false);
         }
