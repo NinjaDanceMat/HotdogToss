@@ -83,6 +83,9 @@ public class HotDogController : MonoBehaviour
     public AudioSource powerUp;
     public AudioSource slomo;
 
+    public AudioSource fire;
+
+    public AudioSource lossLife;
     void Start()
     {
         lives = maxLives;
@@ -180,7 +183,7 @@ public class HotDogController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-
+                powerUp.pitch = Random.Range(0.8f, 1.2f);
                 powerUp.Play();
                 currentState = HotDogState.velocity;
                 currentVelocity = 0;
@@ -199,6 +202,9 @@ public class HotDogController : MonoBehaviour
 
             if (Input.GetKeyUp(KeyCode.Mouse0))
             {
+                fire.pitch = Random.Range(0.8f, 1.2f);
+                fire.Play();
+                
                 powerUp.Stop();
                 whee.pitch = Random.Range(0.8f, 1.2f);
                 whee.Play();
@@ -213,6 +219,8 @@ public class HotDogController : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Mouse0) && slowMoModesLeft > 0)
             {
+                powerUp.pitch = Random.Range(0.8f, 1.2f);
+                powerUp.Play();
                 slomo.pitch = Random.Range(0.8f, 1.2f);
                 slomo.Play();
                 currentVelocity = 0;
@@ -232,6 +240,7 @@ public class HotDogController : MonoBehaviour
 
             if (hotdogTransform.position.y < minYPos && extraHotDogs <= 0)
             {
+
                 ResetAfterBounce();
             }
 
@@ -256,6 +265,8 @@ public class HotDogController : MonoBehaviour
 
                     if (Input.GetKeyUp(KeyCode.Mouse0) || sloMoTimer > maxSloMoTimer)
                     {
+                        fire.pitch = Random.Range(0.8f, 1.2f);
+                        fire.Play();
                         lines.Stop();
                         slomo.Stop();
                         slowMoModeEnabled = false;
@@ -283,6 +294,7 @@ public class HotDogController : MonoBehaviour
 
     private void ResetAfterBounce()
     {
+        lossLife.Play();
         launchArrow.enabled = true;
         Trampoline.instance.gameObject.SetActive(false);
         WallManager.instance.Deactive();
