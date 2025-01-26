@@ -13,6 +13,8 @@ public enum HotDogState
 
 public class HotDogController : MonoBehaviour
 {
+    public ParticleSystem lines;
+
     public SpriteRenderer launchArrow;
 
     public HighScoreManager scoreManager;
@@ -204,6 +206,7 @@ public class HotDogController : MonoBehaviour
                 slowMoMode = HotDogState.direction;
                 sloMoTimer = 0;
                 slowMoModeEnabled = true;
+                lines.Play();
                 slowMoModesLeft -= 1;
                 UpdateSloMoDisplay();
                 sloMoArrow.gameObject.SetActive(true);
@@ -240,6 +243,7 @@ public class HotDogController : MonoBehaviour
 
                     if (Input.GetKeyUp(KeyCode.Mouse0) || sloMoTimer > maxSloMoTimer)
                     {
+                        lines.Stop();
                         slowMoModeEnabled = false;
                         sloMoArrow.gameObject.SetActive(false);
                         hotdogBody.linearVelocity = sloMoArrow.right * currentVelocity * velocityMultiplier;
@@ -282,6 +286,7 @@ public class HotDogController : MonoBehaviour
 
         ScoreSpawner.instance.scoreForThisRun = 0;
         slowMoModesLeft = maxSlowMoModes;
+        lines.Stop();
         UpdateSloMoDisplay();
         slowMoModeEnabled = false;
         sloMoArrow.gameObject.SetActive(false);
