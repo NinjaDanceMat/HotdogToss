@@ -28,9 +28,21 @@ public class BubbleGenerator : MonoBehaviour
 
 
     public Transform centerPoint;
+
+    private Dictionary<int, float> weights = new Dictionary<int, float>();
+    private float totalWeight;
+
     void Awake()
     {
         instance = this;
+    }
+    void Start()
+    {
+        // Initialize weights (equal probabilities)
+        weights[0] = 1.0f;
+        weights[1] = 1.0f;
+        weights[2] = 1.0f;
+        totalWeight = weights[0] + weights[1] + weights[2];
     }
 
     // Update is called once per frame
@@ -63,22 +75,56 @@ public class BubbleGenerator : MonoBehaviour
             if (bonusSpawnTimer > bonusSpawnTime)
             {
                 bonusSpawnTimer = 0;
-                int randomInt = Random.Range(0,3);
-                if (randomInt == 0)
-                {
-                    spawnPrefab = bonusHotDogPrefab;
-                }
-                else if (randomInt == 1)
-                {
-                    spawnPrefab = wallPrefab;
-                }
-                else if (randomInt == 2)
-                {
-                    spawnPrefab = trampolinePrefab;
-                }
+                spawnPrefab = GetSpawnPrefab();
+  
 
             }
             bubbles.Add(Instantiate(spawnPrefab, newPos, Quaternion.identity));
+        }
+
+
+    }
+    public GameObject GetSpawnPrefab()
+    {
+        // Get a random value between 0 and totalWeight
+        float randomValue = Random.Range(0, totalWeight);
+
+        // Find which option corresponds to the random value
+        int chosenOption = -1;
+        float cumulativeWeight = 0;
+        foreach (var pair in weights)
+        {
+            cumulativeWeight += pair.Value;
+            if (randomValue < cumulativeWeight)
+            {
+                chosenOption = pair.Key;
+                break;
+            }
+        }
+
+        // Adjust weights to make the chosen option less likely
+        if (chosenOption != -1)
+        {
+            weights[chosenOption] *= 0.5f; // Reduce the weight of the chosen option
+            NormalizeWeights(); // Normalize weights to keep them meaningful
+        }
+
+        // Return the appropriate prefab
+        switch (chosenOption)
+        {
+            case 0: return bonusHotDogPrefab;
+            case 1: return wallPrefab;
+            case 2: return trampolinePrefab;
+            default: return null;
+        }
+    }
+
+    private void NormalizeWeights()
+    {
+        totalWeight = 0;
+        foreach (var key in weights.Keys)
+        {
+            totalWeight += weights[key];
         }
     }
 }

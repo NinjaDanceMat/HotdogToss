@@ -16,7 +16,7 @@ public class Trampoline : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position,endPoint.position,Time.deltaTime*200);
+        transform.position = Vector3.MoveTowards(transform.position,endPoint.position,Time.deltaTime*150);
     }
     private void OnEnable()
     {
