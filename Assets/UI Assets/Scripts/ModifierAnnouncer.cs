@@ -20,6 +20,7 @@ public class ModifierAnnouncer : MonoBehaviour
     [SerializeField] string bunBarrier = "Bun Barrier!";
     [SerializeField] string porkProtector = "Port Protector!";
     public float torqueRange = 20f;
+    public float forceAmount = 20f;
     public ParticleSystem particleSystem;
      
     public static ModifierAnnouncer instance;
@@ -50,6 +51,7 @@ public class ModifierAnnouncer : MonoBehaviour
         GameObject newObject = Instantiate(announcementPrefab, annoucmentLocation.position, Quaternion.identity);
         float torqueAmount = Random.Range(-torqueRange, torqueRange);
         newObject.GetComponent<Rigidbody2D>().AddTorque(torqueAmount);
+        newObject.GetComponent<Rigidbody2D>().AddForce(new Vector2 (0, forceAmount), ForceMode2D.Impulse);
         announcementText = newObject.GetComponentInChildren<TextMeshProUGUI>();
         particleSystem = newObject.GetComponent<ParticleSystem>();
         whichPowerUp(typeOfPowerup);
