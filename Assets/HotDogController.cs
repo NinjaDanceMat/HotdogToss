@@ -14,6 +14,8 @@ public enum HotDogState
 
 public class HotDogController : MonoBehaviour
 {
+    public GameObject info;
+
     public ParticleSystem lines;
 
     public SpriteRenderer launchArrow;
@@ -166,6 +168,7 @@ public class HotDogController : MonoBehaviour
                 lives = maxLives;
                 UpdateLivesDisplay();
                 PermanentScoreController.instance.totalScore = 0;
+                info.SetActive(true);
             }
         }
 
@@ -183,6 +186,7 @@ public class HotDogController : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
+                info.SetActive(false);
                 powerUp.pitch = Random.Range(0.8f, 1.2f);
                 powerUp.Play();
                 currentState = HotDogState.velocity;
@@ -294,6 +298,7 @@ public class HotDogController : MonoBehaviour
 
     private void ResetAfterBounce()
     {
+        
         lossLife.Play();
         launchArrow.enabled = true;
         Trampoline.instance.gameObject.SetActive(false);
@@ -308,6 +313,10 @@ public class HotDogController : MonoBehaviour
             currentState = HotDogState.joeover;
             gameOverScreen.SetActive(true);
             finalScore.text = "Final Score: " + PermanentScoreController.instance.totalScore;
+        }
+        else
+        {
+            info.SetActive(true);
         }
 
         ScoreSpawner.instance.scoreForThisRun = 0;
