@@ -147,6 +147,7 @@ MonoBehaviour:
   minBonusXVelocityValue: 20
   animator: {fileID: 3660120338763186459}
   thisCollider: {fileID: 8063783661128472175}
+  pop: {fileID: -1402843378127943553}
 --- !u!50 &4445062223405748830
 Rigidbody2D:
   serializedVersion: 5
@@ -242,9 +243,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: 564490abd373b1148a3e502c91500a97, type: 3}
+  m_Resource: {fileID: 8300000, guid: 564490abd373b1148a3e502c91500a97, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

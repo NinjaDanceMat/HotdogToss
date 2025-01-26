@@ -19,10 +19,13 @@ public class BubbleBehaviour : MonoBehaviour
     public Animator animator;
     public Collider2D thisCollider;
 
+    public AudioSource pop;
 
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
+        pop.pitch = Random.Range(0.8f,1.2f);
+        pop.Play();
         ScreenShake.Instance.TriggerShake();
         BubbleGenerator.instance.bubbles.Remove(gameObject);
         if (isBonus)
