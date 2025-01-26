@@ -21,10 +21,15 @@ public class BubbleBehaviour : MonoBehaviour
 
     public AudioSource pop;
 
+    public GameObject icon;
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        pop.pitch = Random.Range(0.8f,1.2f);
+        if (icon != null)
+        {
+            icon.SetActive(false);
+        }
+            pop.pitch = Random.Range(0.8f,1.2f);
         pop.Play();
         ScreenShake.Instance.TriggerShake();
         BubbleGenerator.instance.bubbles.Remove(gameObject);
